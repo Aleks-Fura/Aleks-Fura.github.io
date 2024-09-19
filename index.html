@@ -86,25 +86,43 @@
 <div id="addedItems" class="catalog"></div>
 
 <script>
-    document.getElementById('addItemForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const description = document.getElementById('description').value;
-        const price = document.getElementById('price').value;
-        const image = document.getElementById('image').value;
+   document.getElementById('addItemForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Отменяем стандартное поведение формы (перезагрузку страницы)
 
-        const newItem = document.createElement('div');
-        newItem.className = 'item';
-        newItem.innerHTML = `
-            <img src="${image}" alt="${name}">
-            <h3>${name}</h3>
-            <p>${description}</p>
-            <p>Цена: ${price} рублей</p>
-        `;
+    // Получаем значения из формы
+    const name = document.getElementById('name').value;
+    const description = document.getElementById('description').value;
+    const price = document.getElementById('price').value;
+    const image = document.getElementById('image').value;
 
-        document.getElementById('addedItems').appendChild(newItem);
+    // Создаем объект товара
+    const newItem = {
+        name: name,
+        description: description,
+        price: price,
+        image: image
+    };
 
-        document.getElementById('addItemForm').reset();
+    // Сохраняем товар в Firebase
+    const newItemRef = database.ref('items').push(); // Создаем новую запись в базе данных
+    newItemRef.set(newItem).then(() => {
+        // Если товар успешно сохранён, добавляем его на страницу
+        addItemToPage(newItem);
+        document.getElementById('addItemForm').reset(); // Очищаем форму после отправки
+    }).catch((error) => {
+        console.error("Ошибка при сохранении товара: ", error);
     });
-</script>
+});
+
+// Функция для добавления товара на страницу (обновляет HTML)
+function addItemToPage(item) {
+    const newItem = document.createElement('div');
+    newItem.className = 'item';
+    newItem.innerHTML = `
+        <img src="${item.image}" alt="${item.name}">
+        <h3>${item.name}</h3>
+        <p>${item.description}</p>
+        <p>Цена: ${item.price} рублей</p>
+    `;
+    document.getElementById('addedItems').appendChild(newItem);
+}
