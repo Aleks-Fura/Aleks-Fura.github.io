@@ -28,42 +28,35 @@
             height: auto;
         }
     </style>
-<!-- Подключаем Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 
-<!-- Инициализация Firebase -->
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBJ4zgatvmjj6XRH45kV8V4ISCPTExXRls",
-        authDomain: "game-birzha.firebaseapp.com",
-        projectId: "game-birzha",
-        storageBucket: "game-birzha.appspot.com",
-        messagingSenderId: "367924838315",
-        appId: "1:367924838315:web:8561f006ca00c8482a5cee",
-        measurementId: "G-KSSF38VNBB"
-    };
+    <!-- Подключаем Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 
-    // Инициализация Firebase
-    firebase.initializeApp(firebaseConfig);
+    <!-- Инициализация Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ4zgatvmjj6XRH45kV8V4ISCPTExXRls",
+            authDomain: "game-birzha.firebaseapp.com",
+            projectId: "game-birzha",
+            storageBucket: "game-birzha.appspot.com",
+            messagingSenderId: "367924838315",
+            appId: "1:367924838315:web:8561f006ca00c8482a5cee",
+            measurementId: "G-KSSF38VNBB"
+        };
 
-    // Инициализация базы данных
-    const database = firebase.database();
-</script>
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Инициализация базы данных
+        const database = firebase.database();
+    </script>
 </head>
-  const firebaseConfig = {
-  apiKey: "AIzaSyBJ4zgatvmjj6XRH45kV8V4ISCPTExXRls",
-  authDomain: "game-birzha.firebaseapp.com",
-  projectId: "game-birzha",
-  storageBucket: "game-birzha.appspot.com",
-  messagingSenderId: "367924838315",
-  appId: "1:367924838315:web:8561f006ca00c8482a5cee",
-  measurementId: "G-KSSF38VNBB"
-};
+
 <body>
     <h1>Добро пожаловать на мою игровую биржу</h1>
     <p>Здесь будет каталог товаров и система гарантии.</p>
-    
+
     <h2>Каталог товаров</h2>
     <div class="catalog">
         <div class="item">
@@ -85,66 +78,68 @@
             <button>Купить</button>
         </div>
     </div>
+
+    <h2>Добавить товар</h2>
+    <form id="addItemForm">
+        <label for="name">Название товара:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="description">Описание товара:</label><br>
+        <textarea id="description" name="description" required></textarea><br><br>
+
+        <label for="price">Цена (руб.):</label><br>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <label for="image">Ссылка на изображение:</label><br>
+        <input type="url" id="image" name="image" required><br><br>
+
+        <button type="submit">Добавить товар</button>
+    </form>
+
+    <h2>Добавленные товары</h2>
+    <div id="addedItems" class="catalog"></div>
+
+    <script>
+        document.getElementById('addItemForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Отменяем стандартное поведение формы (перезагрузку страницы)
+
+            // Получаем значения из формы
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const image = document.getElementById('image').value;
+
+            // Создаем объект товара
+            const newItem = {
+                name: name,
+                description: description,
+                price: price,
+                image: image
+            };
+
+            // Сохраняем товар в Firebase
+            const newItemRef = database.ref('items').push(); // Создаем новую запись в базе данных
+            newItemRef.set(newItem).then(() => {
+                // Если товар успешно сохранён, добавляем его на страницу
+                addItemToPage(newItem);
+                document.getElementById('addItemForm').reset(); // Очищаем форму после отправки
+            }).catch((error) => {
+                console.error("Ошибка при сохранении товара: ", error);
+            });
+        });
+
+        // Функция для добавления товара на страницу (обновляет HTML)
+        function addItemToPage(item) {
+            const newItem = document.createElement('div');
+            newItem.className = 'item';
+            newItem.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <p>Цена: ${item.price} рублей</p>
+            `;
+            document.getElementById('addedItems').appendChild(newItem);
+        }
+    </script>
 </body>
 </html>
-<h2>Добавить товар</h2>
-<form id="addItemForm">
-    <label for="name">Название товара:</label><br>
-    <input type="text" id="name" name="name" required><br><br>
-
-    <label for="description">Описание товара:</label><br>
-    <textarea id="description" name="description" required></textarea><br><br>
-
-    <label for="price">Цена (руб.):</label><br>
-    <input type="number" id="price" name="price" required><br><br>
-
-    <label for="image">Ссылка на изображение:</label><br>
-    <input type="url" id="image" name="image" required><br><br>
-
-    <button type="submit">Добавить товар</button>
-</form>
-
-<h2>Добавленные товары</h2>
-<div id="addedItems" class="catalog"></div>
-
-<script>
-   document.getElementById('addItemForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Отменяем стандартное поведение формы (перезагрузку страницы)
-
-    // Получаем значения из формы
-    const name = document.getElementById('name').value;
-    const description = document.getElementById('description').value;
-    const price = document.getElementById('price').value;
-    const image = document.getElementById('image').value;
-
-    // Создаем объект товара
-    const newItem = {
-        name: name,
-        description: description,
-        price: price,
-        image: image
-    };
-
-    // Сохраняем товар в Firebase
-    const newItemRef = database.ref('items').push(); // Создаем новую запись в базе данных
-    newItemRef.set(newItem).then(() => {
-        // Если товар успешно сохранён, добавляем его на страницу
-        addItemToPage(newItem);
-        document.getElementById('addItemForm').reset(); // Очищаем форму после отправки
-    }).catch((error) => {
-        console.error("Ошибка при сохранении товара: ", error);
-    });
-});
-
-// Функция для добавления товара на страницу (обновляет HTML)
-function addItemToPage(item) {
-    const newItem = document.createElement('div');
-    newItem.className = 'item';
-    newItem.innerHTML = `
-        <img src="${item.image}" alt="${item.name}">
-        <h3>${item.name}</h3>
-        <p>${item.description}</p>
-        <p>Цена: ${item.price} рублей</p>
-    `;
-    document.getElementById('addedItems').appendChild(newItem);
-}
