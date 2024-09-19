@@ -28,6 +28,28 @@
             height: auto;
         }
     </style>
+<!-- Подключаем Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+
+<!-- Инициализация Firebase -->
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBJ4zgatvmjj6XRH45kV8V4ISCPTExXRls",
+        authDomain: "game-birzha.firebaseapp.com",
+        projectId: "game-birzha",
+        storageBucket: "game-birzha.appspot.com",
+        messagingSenderId: "367924838315",
+        appId: "1:367924838315:web:8561f006ca00c8482a5cee",
+        measurementId: "G-KSSF38VNBB"
+    };
+
+    // Инициализация Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Инициализация базы данных
+    const database = firebase.database();
+</script>
 </head>
   const firebaseConfig = {
   apiKey: "AIzaSyBJ4zgatvmjj6XRH45kV8V4ISCPTExXRls",
